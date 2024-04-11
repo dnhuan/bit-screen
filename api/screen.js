@@ -4,10 +4,12 @@ chromium.setHeadlessMode = true;
 
 export async function GET(request) {
 	try {
+		// console.log(request.headers.get("host"));
 		let browser;
-		console.log(process.env.ENVIRONMENT);
-		if (process.env.ENVIRONMENT === "DEV") {
+		let scheme;
+		if (process.env.VERCEL_ENV === "development") {
 			browser = await puppeteer.launch();
+			scheme = "http://";
 		} else {
 			browser = await puppeteer.launch({
 				args: chromium.args,
@@ -15,9 +17,10 @@ export async function GET(request) {
 				executablePath: await chromium.executablePath(),
 				headless: chromium.headless,
 			});
+			scheme = "https://";
 		}
 		const page = await browser.newPage();
-		await page.goto("https://bit-screen.vercel.app/", {
+		await page.goto(`${scheme}${request.headers.get("host")}`, {
 			waitUntil: "networkidle0",
 		});
 		const screenshot = await page.screenshot({
