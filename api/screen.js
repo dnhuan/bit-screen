@@ -4,7 +4,6 @@ chromium.setHeadlessMode = true;
 
 export async function GET(request) {
 	try {
-		// console.log(request.headers.get("host"));
 		let browser;
 		let scheme;
 		if (process.env.VERCEL_ENV === "development") {
