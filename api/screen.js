@@ -1,4 +1,6 @@
 import puppeteer from "puppeteer";
+import sharp from "sharp";
+import Jimp from "jimp";
 import chromium from "@sparticuz/chromium";
 chromium.setHeadlessMode = true;
 
@@ -31,9 +33,17 @@ export async function GET(request) {
 			},
 		});
 		await browser.close();
-		return new Response(screenshot, {
+
+		const bitmap = await sharp(screenshot)
+			.resize(540, 960)
+			.greyscale()
+			.extractChannel(1)
+			.raw({ depth: "uchar" })
+			.toBuffer();
+		console.log(bitmap);
+		return new Response(bitmap, {
 			headers: {
-				"Content-Type": "image/png",
+				"Content-Type": "application/octet-stream",
 			},
 		});
 	} catch (error) {

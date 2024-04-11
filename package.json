@@ -10,11 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "image-q": "^4.0.0",
+    "jimp": "^0.22.12",
     "moment": "^2.30.1",
     "puppeteer": "^22.6.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-moment": "^1.1.3"
+    "react-moment": "^1.1.3",
+    "sharp": "^0.33.3"
   },
   "devDependencies": {
     "@sparticuz/chromium": "^123.0.1",
