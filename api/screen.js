@@ -34,14 +34,27 @@ export async function GET(request) {
 		});
 		await browser.close();
 
-		const bitmap = await sharp(screenshot)
-			.resize(540, 960)
+		const { searchParams } = new URL(request.url);
+		const hasDebug = searchParams.has("debug");
+		const debug = hasDebug ? searchParams.get("debug") === "true" : false;
+
+		const bitmap = sharp(screenshot)
+			.rotate(270)
+			.resize(960, 540)
 			.greyscale()
 			.extractChannel(1)
-			.raw({ depth: "uchar" })
-			.toBuffer();
-		console.log(bitmap);
-		return new Response(bitmap, {
+			.raw({ depth: "uchar" });
+
+		if (debug) {
+			const exportImage = await bitmap.png().toBuffer();
+			return new Response(exportImage, {
+				headers: {
+					"Content-Type": "image/png",
+				},
+			});
+		}
+		const exportBitmap = await bitmap.toBuffer();
+		return new Response(exportBitmap, {
 			headers: {
 				"Content-Type": "application/octet-stream",
 			},
