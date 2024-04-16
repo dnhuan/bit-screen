@@ -53,6 +53,7 @@ export async function GET(request) {
 			scheme = "https://";
 		}
 		const page = await browser.newPage();
+		await page.emulateTimezone("America/Los_Angeles");
 		await page.goto(`${scheme}${request.headers.get("host")}`, {
 			waitUntil: "networkidle0",
 		});
