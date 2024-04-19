@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "image-q": "^4.0.0",
-    "jimp": "^0.22.12",
+    "@vercel/kv": "^1.0.1",
+    "join-images": "^1.1.5",
     "moment": "^2.30.1",
     "puppeteer": "^22.6.3",
     "react": "^18.2.0",
