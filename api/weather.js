@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer";
 import chromium from "@sparticuz/chromium";
 import { joinImages } from "join-images";
+chromium.setHeadlessMode = true;
 
 const SITE_WIDTH = 480;
 const SITE_HEIGHT = 2000;
@@ -10,13 +11,15 @@ export async function GET(request) {
 		let browser;
 		if (process.env.VERCEL_ENV === "development") {
 			browser = await puppeteer.launch({
-				headless: false,
+				headless: true,
 				devtools: false,
 			});
 		} else {
 			browser = await puppeteer.launch({
+				args: chromium.args,
+				defaultViewport: chromium.defaultViewport,
 				executablePath: await chromium.executablePath(),
-				headless: true,
+				headless: chromium.headless,
 			});
 		}
 		const page = await browser.newPage();
