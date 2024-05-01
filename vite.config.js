@@ -7,4 +7,9 @@ export default defineConfig({
 	resolve: {
 		mainFields: [],
 	},
+	build: {
+		rollupOptions: {
+			external: ["sharp"],
+		},
+	},
 });

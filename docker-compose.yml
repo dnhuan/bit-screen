@@ -1,0 +1,9 @@
+services:
+    chrome-remote:
+        build: .
+        ports:
+            - "3001:3001" # Map the debugging port from the container to the host
+            - "9222:9222" # Map the Chrome debugging port from the container to the host
+        restart: unless-stopped
+        security_opt:
+            - seccomp:./chrome-seccomp.json

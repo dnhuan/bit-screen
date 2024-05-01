@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 import sharp from "sharp";
 
 import chromium from "@sparticuz/chromium";
@@ -36,23 +36,18 @@ function compactBuffer(binaryData) {
 	return outputBuffer;
 }
 
+export const maxDuration = 300;
+
 export async function GET(request) {
+	let browser, page;
 	try {
-		let browser;
 		let scheme;
-		if (process.env.VERCEL_ENV === "development") {
-			browser = await puppeteer.launch();
-			scheme = "http://";
-		} else {
-			browser = await puppeteer.launch({
-				args: chromium.args,
-				defaultViewport: chromium.defaultViewport,
-				executablePath: await chromium.executablePath(),
-				headless: chromium.headless,
-			});
-			scheme = "https://";
-		}
-		const page = await browser.newPage();
+		browser = await puppeteer.connect({
+			browserURL: "http://localhost:9222",
+		});
+		scheme = "http://";
+
+		page = await browser.newPage();
 		await page.emulateTimezone("America/Los_Angeles");
 		await page.goto(`${scheme}${request.headers.get("host")}`, {
 			waitUntil: "networkidle0",
@@ -65,7 +60,8 @@ export async function GET(request) {
 				height: SCREEN_WIDTH,
 			},
 		});
-		await browser.close();
+		await page.close();
+		await browser.disconnect();
 
 		const { searchParams } = new URL(request.url);
 		const hasDebug = searchParams.has("debug");
@@ -103,6 +99,8 @@ export async function GET(request) {
 			},
 		});
 	} catch (error) {
+		if (page) await page.close();
+		if (browser) await browser.disconnect();
 		console.error("Error taking screenshot:", error);
 		return new Response("Error taking screenshot.", { status: 500 });
 	}

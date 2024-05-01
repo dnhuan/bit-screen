@@ -1,70 +1,67 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
-import { joinImages } from "join-images";
-chromium.setHeadlessMode = true;
+import sharp from "sharp";
 
-const SITE_WIDTH = 480;
+const SITE_WIDTH = 478;
 const SITE_HEIGHT = 2000;
 
 export async function GET(request) {
+	let browser;
+	let page;
 	try {
-		let browser;
-		if (process.env.VERCEL_ENV === "development") {
-			browser = await puppeteer.launch({
-				headless: true,
-				devtools: false,
-			});
-		} else {
-			browser = await puppeteer.launch({
-				args: chromium.args,
-				defaultViewport: chromium.defaultViewport,
-				executablePath: await chromium.executablePath(),
-				headless: chromium.headless,
-			});
-		}
-		const page = await browser.newPage();
+		browser = await puppeteer.connect({
+			browserURL: "http://localhost:9222",
+		});
+
+		page = await browser.newPage();
 		await page.setViewport({
 			width: SITE_WIDTH,
 			height: SITE_HEIGHT,
 		});
 		await page.emulateTimezone("America/Los_Angeles");
-		await page.goto(`https://openweathermap.org/city/5392171`, {
-			waitUntil: "networkidle2",
-		});
+		page.goto(`https://openweathermap.org/city/5392171`);
 		await page.waitForSelector(".owm-weather-icon");
 
 		// Finish loading the page, now get current weather
 		const currentWeather = await page.$(".current-container");
 		const screenshotTop = await currentWeather.screenshot();
 
-		// Clean up for forecast
-		await page.$$eval(".chevron-container", (els) =>
-			els.forEach((el) => el.remove())
-		);
+		// // Clean up for forecast
+		// await page.$$eval(".chevron-container", (els) =>
+		// 	els.forEach((el) => el.remove())
+		// );
 
-		// Get forecast
-		const forecast = await page.$(
-			"#weather-widget > div.section-content > div.grid-container.grid-5-4"
-		);
-		const screenshotBottom = await forecast.screenshot();
+		// // Get forecast
+		// const forecast = await page.$(
+		// 	"#weather-widget > div.section-content > div.grid-container.grid-5-4"
+		// );
+		// const screenshotBottom = await forecast.screenshot();
+		await page.close();
+		await browser.disconnect();
+		page = null;
+		browser = null;
 
-		await browser.close();
+		// const screenshotSharp = await joinImages([screenshotTop], {
+		// 	direction: "vertical",
+		// 	offset: 20,
+		// 	color: "#fff",
+		// });
 
-		const screenshotSharp = await joinImages(
-			[screenshotTop, screenshotBottom],
-			{
-				direction: "vertical",
-				offset: 10,
-				color: "#fff",
-			}
-		);
-		const screenshot = await screenshotSharp.png().toBuffer();
+		const screenshot = await sharp(screenshotTop)
+			.rotate(90)
+			.png()
+			.toBuffer();
+
 		return new Response(screenshot, {
 			headers: {
 				"Content-Type": "image/png",
+				"Cache-Control": "stale-while-revalidate=60",
 			},
 		});
 	} catch (error) {
+		if (page) await page.close();
+		if (browser) await browser.disconnect();
+
 		console.error("Error taking screenshot:", error);
 		return new Response("Error taking screenshot.", { status: 500 });
 	}
