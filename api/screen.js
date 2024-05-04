@@ -46,7 +46,8 @@ export async function GET(request) {
 			browserURL: "http://localhost:9222",
 		});
 		scheme = "http://";
-
+		const pages = await browser.pages(); // Get all open pages (tabs)
+		await Promise.all(pages.map(async (page) => await page.close()));
 		page = await browser.newPage();
 		await page.emulateTimezone("America/Los_Angeles");
 		await page.goto(`${scheme}${request.headers.get("host")}`, {
@@ -99,8 +100,6 @@ export async function GET(request) {
 			},
 		});
 	} catch (error) {
-		if (page) await page.close();
-		if (browser) await browser.disconnect();
 		console.error("Error taking screenshot:", error);
 		return new Response("Error taking screenshot.", { status: 500 });
 	}

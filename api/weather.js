@@ -59,9 +59,6 @@ export async function GET(request) {
 			},
 		});
 	} catch (error) {
-		if (page) await page.close();
-		if (browser) await browser.disconnect();
-
 		console.error("Error taking screenshot:", error);
 		return new Response("Error taking screenshot.", { status: 500 });
 	}
