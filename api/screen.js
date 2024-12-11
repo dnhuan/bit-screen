@@ -1,9 +1,6 @@
 import puppeteer from "puppeteer-core";
 import sharp from "sharp";
 
-import chromium from "@sparticuz/chromium";
-chromium.setHeadlessMode = true;
-
 const SCREEN_WIDTH = 960;
 const SCREEN_HEIGHT = 540;
 

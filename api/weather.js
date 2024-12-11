@@ -1,5 +1,4 @@
 import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
 import sharp from "sharp";
 
 const SITE_WIDTH = 478;

@@ -13,8 +13,7 @@ RUN yarn install --ignore-engines
 
 COPY . .
 
-EXPOSE 3000
-EXPOSE 9222
+EXPOSE 3001
 
 ENTRYPOINT ["sh","/usr/src/app/entrypoint.sh"]
 
