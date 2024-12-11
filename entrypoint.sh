@@ -1,8 +1,7 @@
 #!/bin/bash
 export VIPS_CONCURRENCY=16
 export VIPS_CACHE=TRUE
-source .env
-vercel dev -l 3001 --token $TOKEN &
+vercel dev -l 3001 &
 # Start Chrome in the background
 chromium-browser --remote-debugging-port=9222 \
                  --remote-debugging-address=0.0.0.0 \
