@@ -1,9 +1,8 @@
 # Use linux/arm/v7 Alpine Chrome image
-FROM ghcr.io/dnhuan/alpine-chrome:latest
+FROM ghcr.io/dnhuan/alpine-chrome:with-node
 
 USER root
-RUN apk add --no-cache nodejs npm
-RUN npm install -g yarn vercel
+RUN yarn add vercel
 USER chrome
 
 WORKDIR /usr/src/app
