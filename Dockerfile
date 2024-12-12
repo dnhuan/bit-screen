@@ -1,5 +1,5 @@
-# Use Zenika's Alpine Chrome image
-FROM zenika/alpine-chrome:latest
+# Use linux/arm/v7 Alpine Chrome image
+FROM ghcr.io/dnhuan/alpine-chrome:latest
 
 USER root
 RUN apk add --no-cache nodejs npm
