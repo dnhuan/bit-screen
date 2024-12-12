@@ -1,9 +1,8 @@
 # Use linux/arm/v7 Alpine Chrome image
 FROM ghcr.io/dnhuan/alpine-chrome:with-node
 
-USER root
-RUN yarn add vercel
 USER chrome
+RUN yarn add vercel
 
 WORKDIR /usr/src/app
 COPY package.json .
