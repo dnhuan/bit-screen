@@ -1,5 +1,4 @@
-# Use linux/arm/v7 Alpine Chrome image
-FROM ghcr.io/dnhuan/alpine-chrome:with-node
+FROM zenika/alpine-chrome:with-node
 
 USER chrome
 WORKDIR /usr/src/app
