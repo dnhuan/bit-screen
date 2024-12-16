@@ -49,6 +49,7 @@ export async function GET(request) {
 		await page.emulateTimezone("America/Los_Angeles");
 		await page.goto(`${scheme}${request.headers.get("host")}`, {
 			waitUntil: "networkidle0",
+			timeout: 0,
 		});
 		const screenshot = await page.screenshot({
 			clip: {
